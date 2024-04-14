@@ -34,10 +34,19 @@ namespace Game
         {
             return (velocity - POWER_MIN)/ POWER_BOOST_MAX >= 0 && (velocity - POWER_MIN)/ POWER_BOOST_MAX <= 1;
         }
-        
+        /// <summary>
+        /// This function is inversed calculation based on the DefenseState,
+        /// We assume that the enemy is moving in a straight line with a constant speed, and the bullet is shot with fixed angle
+        /// We have 2 equations, the position x and y of the bullet and the enemy must be the same
+        /// diffDistance = (to.x - from.x) = speed * cos(angle) * time + enemySpeed * time;
+        /// => time = diffDistance / (speed * cos(angle) + enemySpeed)
+        /// diffHeight = (to.y - from.y) = speed * sin(angle) * time - 0.5 * g * speed * (time^2 + FIXED_TIME_STEP * time)
+        /// replace time in the second equation, we have a quadratic equation to solve based on speed
+        /// Then we convert the speed to power and return the result
+        /// </summary>
         public static Result InverseFromStartFixAngle(Vector2 from, Vector2 to, double enemySpeed, double fixedAngle)
         {
-            float diffHeight = -(from.y - to.y);
+            float diffHeight = (to.y - from.y);
             float diffDistance = (to.x - from.x);
             float g = GRAVITY;
 
